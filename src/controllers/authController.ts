@@ -62,7 +62,7 @@ const signUp = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    return res.json({ message: "Something went wrong" });
+    return res.status(HTTP_STATUS_CODES.CLIENT_BAD_REQUEST).json({ message: "Something went wrong" });
   }
 };
 
