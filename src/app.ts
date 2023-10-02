@@ -1,6 +1,5 @@
 //@ts-nocheck
 require("dotenv").config();
-require('reflect-metadata');
 const express = require("express");
 const http = require("http");
 const socketio = require("socket.io");
@@ -13,9 +12,6 @@ const { verifyEmail } = require("./controllers/authController");
 const { randPiece,randRoom } = require("./utilities/TicTacToe/utils");
 const Player = require("./utilities/TicTacToe/player");
 const Board = require("./utilities/TicTacToe/board");
-// const socketServer = require('../src/socket');
-
-
 
 const PORT = process.env.PORT;
 
@@ -176,38 +172,37 @@ io.on("connection", (socket) => {
 
   //Listener event for each move and emit different events depending on the state of the game
   socket.on("move", ({ room, piece, index }) => {
-        console.log(room,piece.index);
-        const currentBoard = rooms.get(room).board;
-        currentBoard.move(index, piece);
-    // Ensure currentBoard is initialized with a new Board instance
-  // if (!rooms.has(room) || !rooms.get(room).board) {
-  //   // Initialize a new Board instance if it doesn't exist
-  //   rooms.get(room).board = new Board();
-  // }
-  //   currentBoard = rooms.get(room).board;
-  //   currentBoard.move(index, piece);
+    const currentRoom = rooms.get(room);
+    const currentBoard = currentRoom.board;
+  
+    const currentPlayer = currentRoom.players.find((player) => player.id === socket.id);
+    console.log("Current Player:", currentPlayer);
+    console.log("Current Turn:", currentBoard.getCurrentPlayer());
 
-    // if (currentBoard.checkWinner(piece)) {
-    //   io.to(room).emit("winner", {
-    //     gameState: currentBoard.game,
-    //     id: socket.id,
-    //   });
-    // } else if (currentBoard.checkDraw()) {
-    //   io.to(room).emit("draw", { gameState: currentBoard.game });
-    // } else {
-    //   currentBoard.switchTurn();
-    //   io.to(room).emit("update", {
-    //     gameState: currentBoard.game,
-    //     turn: currentBoard.turn,
-    //   });
-    if (currentBoard.checkWinner(piece)) {
-      io.to(room).emit('winner', { gameState: currentBoard.game, id: socket.id });
-    } else if (currentBoard.checkDraw()) {
-      io.to(room).emit('draw', { gameState: currentBoard.game });
+    if (currentPlayer && currentPlayer.piece === currentBoard.getCurrentPlayer()) {
+      const validMove = currentBoard.move(index, piece);
+  
+      if (validMove) {
+        if (currentBoard.checkWinner(piece)) {
+          io.to(room).emit("winner", {
+            gameState: currentBoard.game,
+            id: socket.id,
+          });
+        } else if (currentBoard.checkDraw()) {
+          io.to(room).emit("draw", { gameState: currentBoard.game });
+        } else {
+          io.to(room).emit("update", {
+            gameState: currentBoard.game,
+            turn: currentBoard.getCurrentPlayer(),
+          });
+        }
+      } else {
+        
+        io.to(socket.id).emit("errorMessage", "Invalid move.");
+      }
     } else {
-      currentBoard.switchTurn();
-      io.to(room).emit('update', { gameState: currentBoard.game, turn: currentBoard.turn });
-    
+      
+      io.to(socket.id).emit("errorMessage", "It's not your turn to make a move.");
     }
   });
 
@@ -257,69 +252,6 @@ io.on("connection", (socket) => {
   });
 });
 
-// Define a Tic Tac Toe game state (you can use a more advanced data structure)
-// const gameStates = new Map(); // Use a Map to store game states by room ID
-
-// // Listen for incoming socket connections
-// io.on('connection', (socket) => {
-//   console.log('A user connected');
-
-//   // Join a room or create a new one
-//   socket.on('joinRoom', (roomName) => {
-//     socket.join(roomName);
-    
-//     if (!gameStates.has(roomName)) {
-//       // If the room doesn't exist, create a new game state
-//       gameStates.set(roomName, {
-//         gameState: ['', '', '', '', '', '', '', '', ''],
-//         currentPlayer: 'X',
-//       });
-//     }
-//     const gameState = gameStates.get(roomName);
-//     console.log('game',gameState);
-//     // Send the current game state to the connected client
-//     socket.emit('gameState', gameState);
-//   });
-
-//   // Handle a player's move
-//   socket.on('move', (index, roomName) => {
-//     console.log("in",index)
-//     const gameState = gameStates.get(roomName);
-//     console.log("gameState-m", gameState);
-//     if (!gameState) {
-//       // Room doesn't exist
-//       return;
-//     }
-//     if (gameState.gameState[index] === '' && gameState.currentPlayer === 'X') {
-//       gameState.gameState[index] = 'X';
-//       gameState.currentPlayer = 'O';
-//       io.to(roomName).emit('gameState', gameState);
-//     } else if (
-//       gameState.gameState[index] === '' &&
-//       gameState.currentPlayer === 'O'
-//     ) {
-//       gameState.gameState[index] = 'O';
-//       gameState.currentPlayer = 'X';
-//       io.to(roomName).emit('gameState', gameState);
-//     }
-//   });
-
-//   // Handle game restart
-//   socket.on('restart', (roomName) => {
-//     console.log('r',roomName)
-//     const gameState = gameStates.get(roomName);
-//     if (gameState) {
-//       gameState.gameState = ['', '', '', '', '', '', '', '', ''];
-//       gameState.currentPlayer = 'X';
-//       io.to(roomName).emit('gameState', gameState);
-//     }
-//   });
-
-//   // Handle disconnection
-//   socket.on('disconnect', () => {
-//     console.log('A user disconnected');
-//   });
-// });
 
 
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
