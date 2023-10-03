@@ -76,11 +76,16 @@ const getAllGameState = async (req, res) => {
         const gameType = gametype;
         console.log(gameType);
         if (gameType === "minesweeper") {
-            const gameStates = await MineSweeper.find({ userId }).sort({ updatedAt: -1 });;
+            const gameStates = await MineSweeper.find({ userId }).sort({ updatedAt: -1 })?.limit(5);
             return res.status(200).json(gameStates);
+        }
+        if (gameType === "tictactoe") {
+        return res.status(500).json({ message: 'Internal server error' });
+
         }
         
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ message: 'Internal server error' });
     }
 };

@@ -251,6 +251,33 @@ io.on("connection", (socket) => {
     }
   });
 
+  // Inside your server code
+socket.on("exitRoom", (room) => {
+  try {
+    const currentRoom = rooms.get(room);
+    const playerId = socket.id;
+
+    // Check if the room exists and the player is in the room
+    if (currentRoom && currentRoom.players.some((player) => player.id === playerId)) {
+      // Remove the player from the room
+      currentRoom.players = currentRoom.players.filter((player) => player.id !== playerId);
+
+      // Notify other players in the room that a player has exited
+      io.to(room).emit("playerExited", playerId);
+
+      // If no players are left in the room, you can remove the room altogether
+      if (currentRoom.players.length === 0) {
+        rooms.delete(room);
+      }
+
+      // Perform any additional cleanup or logic as needed
+    }
+  } catch (error) {
+    console.error("Error handling exitRoom event:", error);
+  }
+});
+
+
   //On disconnect event
   socket.on("disconnecting", () => {
     try {
