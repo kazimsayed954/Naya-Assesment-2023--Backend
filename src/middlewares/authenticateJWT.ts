@@ -10,7 +10,7 @@ function authenticateJWT(req,res,next){
         return res.status(CLIENT_UNAUTHORIZED).json({ message: 'Authentication failed: No token provided' });
       }
 
-      jwt.verify(token, secretKey, (err, decoded) => {
+      jwt.verify(JSON.parse(token), secretKey, (err, decoded) => {
         if (err) {
           return res.status(CLIENT_UNAUTHORIZED).json({ message: 'Authentication failed: Invalid token' });
         }

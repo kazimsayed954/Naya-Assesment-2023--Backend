@@ -5,9 +5,11 @@ const http = require("http");
 const socketio = require("socket.io");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const helmet= require('helmet');
 const authenticateJWT = require("./middlewares/authenticateJWT");
 const generateJWTToken = require("./services/jwtTokenGeneration");
 const authRoute = require("./routes/authRoute");
+const gameStateRoute = require("./routes/gameStateRoute");
 const { verifyEmail } = require("./controllers/authController");
 const { randPiece,randRoom } = require("./utilities/TicTacToe/utils");
 const Player = require("./utilities/TicTacToe/player");
@@ -20,6 +22,7 @@ app.set("view engine", "ejs");
 app.set("views", __dirname + "/src/views");
 // middleware-setup
 app.use(cors());
+app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 const ioCorsOptions = {
@@ -29,7 +32,7 @@ const ioCorsOptions = {
 };
 const server = http.createServer(app);
 const io = socketio(server, ioCorsOptions);
-// const io = socketServer(server);
+
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
@@ -40,6 +43,8 @@ mongoose
   });
 
 app.use("/api/v1/", authRoute);
+app.use("/api/v1/game",authenticateJWT, gameStateRoute);
+
 app.get("/verify/:id", verifyEmail);
 
 // Store the room ids mapping to the room property object
@@ -58,9 +63,6 @@ const makeRoom = (resolve) => {
 
 //Put the newly joined player into a room's player list
 const joinRoom = (player, room) => {
-  // currentRoom = rooms.get(room);
-  // updatedPlayerList = currentRoom.players.push(player);
-  // updatedRoom = { ...currentRoom, players: updatedPlayerList };
   const currentRoom = rooms?.get(room);
   currentRoom?.players?.push(player);
 };
