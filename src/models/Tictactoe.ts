@@ -7,12 +7,9 @@ const TicTacToe = mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
     },
-    gameState: {
-        type:[String],
-    },
-    turn:{
-        type: String,
-    },
-});
+    board: [String],
+    playerTurn: Boolean,
+    winner: String,
+},{timestamps:true});
 
 module.exports = mongoose.model('tictactoe',TicTacToe);
