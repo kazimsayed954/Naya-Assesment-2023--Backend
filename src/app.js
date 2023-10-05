@@ -43,10 +43,10 @@ mongoose
   });
 
 app.use("/api/v1/",rateLimitter, authRoute);
-app.use("/api/v1/game/highscore",rateLimitter,authenticateJWT, gameHighScore);
-app.use("/api/v1/game",rateLimitter,authenticateJWT, gameStateRoute);
+app.use("/api/v1/game/highscore",authenticateJWT, gameHighScore);
+app.use("/api/v1/game",authenticateJWT, gameStateRoute);
 
-app.get("/verify/:id", verifyEmail);
+app.get("/verify/:id",rateLimitter, verifyEmail);
 
 // Store the room ids mapping to the room property object
 // The room property object looks like this {roomid:str, players:Array(2)}
