@@ -6,7 +6,8 @@ const highscoreSchema = mongoose.Schema({
         ref:'User',
     },
     highScore:{
-        type:Number
+        type:Number,
+        default:0,
     },
     gameType:{
         type:String,
