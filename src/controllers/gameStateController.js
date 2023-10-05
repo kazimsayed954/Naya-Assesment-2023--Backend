@@ -1,6 +1,6 @@
-//@ts-nocheck
-const MineSweeper = require("../models/Minesweeper");
-const TicTacToe = require("../models/Tictactoe");
+
+const MineSweeper = require("../models/Minesweeper.js");
+const TicTacToe = require("../models/Tictactoe.js");
 const saveGameState = async (req, res) => {
   try {
     const { userId } = req.user;
@@ -173,6 +173,8 @@ const getSingleGameState = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
 
 module.exports = {
   saveGameState,

@@ -1,4 +1,3 @@
-//@ts-nocheck
 require("dotenv").config();
 const express = require("express");
 const http = require("http");
@@ -6,15 +5,15 @@ const socketio = require("socket.io");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const helmet= require('helmet');
-const authenticateJWT = require("./middlewares/authenticateJWT");
-const rateLimitter = require("./middlewares/rateLimitter");
-const generateJWTToken = require("./services/jwtTokenGeneration");
-const authRoute = require("./routes/authRoute");
-const gameStateRoute = require("./routes/gameStateRoute");
-const { verifyEmail } = require("./controllers/authController");
-const { randPiece,randRoom } = require("./utilities/TicTacToe/utils");
-const Player = require("./utilities/TicTacToe/player");
-const Board = require("./utilities/TicTacToe/board");
+const authenticateJWT = require("./middlewares/authenticateJWT.js");
+const rateLimitter = require("./middlewares/rateLimitter.js");
+const authRoute = require("./routes/authRoute.js");
+const gameStateRoute = require("./routes/gameStateRoute.js");
+const gameHighScore = require("./routes/gameHighScoreRoute.js");
+const { verifyEmail } = require("./controllers/authController.js");
+const { randPiece,randRoom } = require("./utilities/TicTacToe/utils.js");
+const Player = require("./utilities/TicTacToe/player.js");
+const Board = require("./utilities/TicTacToe/board.js");
 
 const PORT = process.env.PORT;
 
@@ -44,6 +43,7 @@ mongoose
   });
 
 app.use("/api/v1/",rateLimitter, authRoute);
+app.use("/api/v1/game/highscore",rateLimitter,authenticateJWT, gameHighScore);
 app.use("/api/v1/game",rateLimitter,authenticateJWT, gameStateRoute);
 
 app.get("/verify/:id", verifyEmail);
@@ -84,9 +84,14 @@ function pieceAssignment(room) {
   const firstPiece = randPiece();
   const lastPiece = firstPiece === 'X' ? 'O' : 'X';
 
-  const currentRoom = rooms.get(room);
-  currentRoom.players[0]?.piece = firstPiece;
-  currentRoom.players[1]?.piece = lastPiece;
+  const currentRoom = rooms?.get(room);
+  if (currentRoom && currentRoom.players && currentRoom.players[0]) {
+    currentRoom.players[0].piece = firstPiece;
+  }
+
+  if (currentRoom && currentRoom.players && currentRoom.players[1]) {
+    currentRoom.players[1].piece = lastPiece;
+  }
 }
 
 //Initialize a new board to a room
@@ -284,7 +289,7 @@ socket.on("exitRoom", (room) => {
       //Get all the rooms that the socket is currently subscribed to
       const currentRooms = Object.keys(socket.rooms);
       //In this game an object can only have 2 rooms max so we check for that
-      if (currentRooms.length === 2) {
+      if (currentRooms?.length === 2) {
         //The game room is always the second element of the list
         const room = currentRooms[1];
         const num = getRoomPlayersNum(room);
@@ -295,7 +300,7 @@ socket.on("exitRoom", (room) => {
         //If 2 then there is one person left so we remove the socket leaving from the player list and
         //emit a waiting event to the other person
         if (num === 2) {
-          currentRoom = rooms.get(room);
+          let currentRoom = rooms.get(room);
           currentRoom.players = currentRoom.players.filter(
             (player) => player.id !== socket.id
           );

@@ -1,4 +1,4 @@
-//@ts-nocheck
+
 class Player {
     constructor(name, room, id, piece = '') {
       this.name = name;

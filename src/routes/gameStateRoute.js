@@ -1,4 +1,3 @@
-// @ts-nocheck
 const express = require('express');
 const { 
     saveGameState,
@@ -6,7 +5,7 @@ const {
     deleteGameState,
     getAllGameState,
     getSingleGameState
-} = require('../controllers/gameStateController')
+} = require('../controllers/gameStateController.js')
 
 const router = express.Router();
 

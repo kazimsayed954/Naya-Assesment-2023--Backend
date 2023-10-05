@@ -1,4 +1,4 @@
-//@ts-nocheck
+
 const nodemailer = require("nodemailer");
 
 const sendMail = (data, req) => {

@@ -1,5 +1,3 @@
-"use strict";
-//@ts-nocheck
 const randRoom = () => {
     var result = '';
     var hexChars = '0123456789abcdef';
@@ -7,8 +5,10 @@ const randRoom = () => {
         result += hexChars[Math.floor(Math.random() * 16)];
     }
     return result;
-};
+}
+
 const randPiece = () => {
-    return Math.random() > 0.5 ? 'X' : 'O';
-};
-module.exports = { randRoom, randPiece };
+    return Math.random() > 0.5 ? 'X':'O'
+}
+
+module.exports = {randRoom, randPiece};

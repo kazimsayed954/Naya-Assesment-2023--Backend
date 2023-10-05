@@ -1,4 +1,4 @@
-//@ts-nocheck
+
 const mongoose = require('mongoose');
 const userSchema = mongoose.Schema({
     name:{

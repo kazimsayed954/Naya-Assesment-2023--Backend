@@ -1,6 +1,6 @@
-//@ts-nocheck
+
 const express = require('express');
-const { signIn, signUp } = require('../controllers/authController');
+const { signIn, signUp } = require('../controllers/authController.js');
 const router = express.Router();
 
 router.post('/signin',signIn);

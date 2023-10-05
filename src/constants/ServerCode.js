@@ -1,5 +1,4 @@
-"use strict";
-//@ts-nocheck
+
 const HTTP_STATUS_CODES = {
     SUCCESS_OK: 200,
     SUCCESS_CREATED: 201,
@@ -8,7 +7,8 @@ const HTTP_STATUS_CODES = {
     CLIENT_UNAUTHORIZED: 401,
     CLIENT_FORBIDDEN: 403,
     CLIENT_NOT_FOUND: 404,
-    CONFLICT_DUPLICATE: 409,
+    CONFLICT_DUPLICATE: 409, 
     SERVER_INTERNAL_ERROR: 500,
-};
-module.exports = HTTP_STATUS_CODES;
+  };
+  
+  module.exports = HTTP_STATUS_CODES;

@@ -1,4 +1,4 @@
-//@ts-nocheck
+
 class Board {
   constructor() {
     this.game = new Array(9).fill(null); // Initialize the game board with empty cells

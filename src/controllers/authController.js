@@ -1,9 +1,9 @@
-//@ts-nocheck
+
 const bcrypt = require("bcrypt");
-const userSchema = require("../models/User");
-const sendMail = require("../services/verificationEmail");
-const HTTP_STATUS_CODES = require("../constants/ServerCode");
-const generateJWTToken = require("../services/jwtTokenGeneration");
+const userSchema = require("../models/User.js");
+const sendMail = require("../services/verificationEmail.js");
+const HTTP_STATUS_CODES = require("../constants/ServerCode.js");
+const generateJWTToken = require("../services/jwtTokenGeneration.js");
 const saltRound = process.env.SALT_ROUNDS;
 
 const signIn = async (req, res) => {

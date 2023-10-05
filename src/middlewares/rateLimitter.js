@@ -1,10 +1,9 @@
-// @ts-nocheck
 const rateLimit = require('express-rate-limit');
 const HTTP_STATUS_CODES = require('../constants/ServerCode');
 
 const customRateLimiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
-    max: 10, // 10 requests per minute per IP
+    max: 20, // 20 requests per minute per IP
     message: 'Too many requests from this IP, please try again in a minute.',
   });
 
