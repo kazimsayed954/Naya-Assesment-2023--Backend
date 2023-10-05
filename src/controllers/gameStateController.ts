@@ -124,7 +124,6 @@ const getAllGameState = async (req, res) => {
     const { userId } = req.user;
     const { gametype } = req.query;
     const gameType = gametype;
-    console.log(gameType);
     if (gameType === "minesweeper") {
       const gameStates = await MineSweeper.find({ userId })
         .sort({ updatedAt: -1 })

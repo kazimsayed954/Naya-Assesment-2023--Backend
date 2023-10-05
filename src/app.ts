@@ -7,6 +7,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const helmet= require('helmet');
 const authenticateJWT = require("./middlewares/authenticateJWT");
+const rateLimitter = require("./middlewares/rateLimitter");
 const generateJWTToken = require("./services/jwtTokenGeneration");
 const authRoute = require("./routes/authRoute");
 const gameStateRoute = require("./routes/gameStateRoute");
@@ -42,8 +43,8 @@ mongoose
     console.log(err);
   });
 
-app.use("/api/v1/", authRoute);
-app.use("/api/v1/game",authenticateJWT, gameStateRoute);
+app.use("/api/v1/",rateLimitter, authRoute);
+app.use("/api/v1/game",rateLimitter,authenticateJWT, gameStateRoute);
 
 app.get("/verify/:id", verifyEmail);
 
@@ -192,8 +193,7 @@ io.on("connection", (socket) => {
       const currentBoard = currentRoom?.board;
     
       const currentPlayer = currentRoom.players.find((player) => player.id === socket.id);
-      console.log("Current Player:", currentPlayer);
-      console.log("Current Turn:", currentBoard?.getCurrentPlayer());
+
   
       if (currentPlayer && currentPlayer?.piece === currentBoard?.getCurrentPlayer()) {
         const validMove = currentBoard?.move(index, piece);
