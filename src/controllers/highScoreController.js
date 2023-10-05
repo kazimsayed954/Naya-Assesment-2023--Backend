@@ -10,7 +10,7 @@ const saveGameHighestScore = async (req, res) => {
 
       const oldHighScore = await highScore.findOne({ userId, gameType });
       if (oldHighScore) {
-        if (Number(oldHighScore.score) < Number(score)) {
+        if (Number(oldHighScore.highScore) < Number(score)) {
           // If the new score is higher, update the existing high score
           oldHighScore.highScore = score;
           await oldHighScore.save();
@@ -42,7 +42,7 @@ const getUserHighScore = async (req, res) => {
       const userHighScore = await highScore.find({ userId });
   
       if (userHighScore) {
-        return res.status(200).json({ highScore: userHighScore });
+        return res.status(200).json({data:userHighScore})
       } else {
         return res.status(404).json({ message: "High score not found for this user." });
       }
