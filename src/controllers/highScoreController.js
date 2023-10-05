@@ -12,7 +12,7 @@ const saveGameHighestScore = async (req, res) => {
       if (oldHighScore) {
         if (Number(oldHighScore.score) < Number(score)) {
           // If the new score is higher, update the existing high score
-          oldHighScore.score = score;
+          oldHighScore.highScore = score;
           await oldHighScore.save();
           return res
             .status(HTTP_STATUS_CODES.SUCCESS_OK)
@@ -20,7 +20,7 @@ const saveGameHighestScore = async (req, res) => {
         }
       } else {
         // If there's no existing high score, create a new record
-        const newHighScore = new highScore({ userId, score, gameType });
+        const newHighScore = new highScore({ userId, highScore:score, gameType });
         await newHighScore.save();
         return res
           .status(HTTP_STATUS_CODES.SUCCESS_OK)
