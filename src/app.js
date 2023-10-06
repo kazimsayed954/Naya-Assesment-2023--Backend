@@ -19,7 +19,8 @@ const PORT = process.env.PORT;
 
 const app = express();
 app.set("view engine", "ejs");
-app.set("views", __dirname + "/src/views");
+app.set("views", __dirname + "/views");
+
 // middleware-setup
 app.use(cors());
 app.use(helmet());
